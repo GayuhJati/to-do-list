@@ -127,7 +127,7 @@ export default function Home() {
             Add +
           </button>
         </div>
-        <div className="flex flex-wrap justify-start gap-x-11 px-[60px] gap-4 flex-row">
+        <div className="flex flex-wrap justify-start gap-x-4 px-[50px] gap-4 flex-row">
         {jobs.map((job) => (
           <JobCard
             key={job.id}
