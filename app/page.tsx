@@ -119,7 +119,7 @@ export default function Home() {
   return (
     <div className=" px-12 flex flex-col gap-4 py-12 justify-center items-center">
       <h1 className="text-6xl text-white font-bold">To-Do List</h1>
-      <div className="bg-slate-50 bg-opacity-30 p-8 flex flex-col gap-10 rounded-xl w-full">
+      <div className="container bg-slate-50 bg-opacity-30 p-8 flex flex-col gap-10 rounded-xl w-full">
         <div className="flex justify-end">
           <button 
           onClick={() => setIsAddModalOpen(true)} 
