@@ -3,17 +3,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const jobs = await prisma.job.findMany();
+    const jobs = await prisma.job.findMany({
+      orderBy: {
+        id: 'asc', 
+      },
+    });
 
     const response = jobs.map((job) => ({
-        id: job.id,
-        title: job.title,
-        description: job.description
-      }));
-    
-      return NextResponse.json({
-        data: response,
-      });
+      id: job.id,
+      title: job.title,
+      description: job.description,
+    }));
+
+    return NextResponse.json({
+      data: response,
+    });
 
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -23,6 +27,7 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
 
 export async function POST(req: NextRequest) {
   try {
