@@ -4,10 +4,9 @@ import { useState, useEffect } from "react";
 import EditModal from "./component/EditModal";
 import DeleteModal from "./component/DeleteModal";
 import AddModal from "./component/AddModal"; 
-import { PrismaClient, Job } from "@prisma/client";
+import {  Job } from "@prisma/client";
 import { toast } from "react-toastify";
 
-const prisma = new PrismaClient();
 
 export default function Home() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -15,10 +14,6 @@ export default function Home() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newJob, setNewJob] = useState({
-    title: '',
-    description: '',
-  });
 
   const fetchJobs = async () => {
     try {
@@ -36,10 +31,6 @@ export default function Home() {
 
   const handleEdit = (job: Job) => {
     setSelectedJob(job);
-    setNewJob({
-      title:job.title,
-      description:job.description,
-    });
     setIsEditModalOpen(true);
   };
 
