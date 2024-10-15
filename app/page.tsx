@@ -15,9 +15,11 @@ export default function Home() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const fetchJobs = async () => {
     try {
-      const response = await fetch("/api/jobs");
+      const response = await fetch(`${apiUrl}/jobs`);
       const data = await response.json();
       setJobs(data.data);
     } catch (error) {
