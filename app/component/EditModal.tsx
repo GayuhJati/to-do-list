@@ -1,27 +1,33 @@
 // components/EditJobModal.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-type Job = {
-  id: number;
-  title: string;
-  description: string;
-};
-
-type EditJobModalProps = {
-  job: Job;
+interface EditJobModalProps{
+  job: {
+    title: string;
+    description: string;
+  };
   isOpen: boolean;
   onClose: () => void;
-  onSave: (updatedJob: Job) => void;
+  onSave: (updatedJob: { title: string; description: string }) => Promise<void>; 
 };
 
-const EditModal: React.FC<EditJobModalProps> = ({ job, isOpen, onClose, onSave }) => {
+function EditModal({ job, isOpen, onClose, onSave }:EditJobModalProps) {
   const [title, setTitle] = useState(job.title);
   const [description, setDescription] = useState(job.description);
 
-  const handleSave = () => {
-    const updatedJob: Job = { ...job, title, description};
-    onSave(updatedJob);
-    onClose(); // Close modal after saving
+  useEffect(() => {
+    setTitle(job.title);
+    setDescription(job.description);
+  }, [job]);
+
+  const handleSave = async (e: React.FormEvent)  => {
+    e.preventDefault();
+    try {
+      await onSave({ title, description });;
+    } catch (err) {
+      console.error("Error during submission:", err);
+    }
+    onClose(); 
   };
 
   if (!isOpen) return null;
@@ -30,7 +36,7 @@ const EditModal: React.FC<EditJobModalProps> = ({ job, isOpen, onClose, onSave }
     <div className="fixed inset-0 text-black bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg max-w-lg w-full">
         <h2 className="text-2xl font-bold mb-4">Edit Job</h2>
-
+        <form onSubmit={handleSave}>
         <div className="mb-4">
           <label className="block text-gray-700 mb-2">Title</label>
           <input
@@ -54,10 +60,11 @@ const EditModal: React.FC<EditJobModalProps> = ({ job, isOpen, onClose, onSave }
           <button onClick={onClose} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
             Cancel
           </button>
-          <button onClick={handleSave} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          <button type='submit' className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
             Save
           </button>
         </div>
+        </form>
       </div>
     </div>
   );

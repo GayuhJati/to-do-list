@@ -15,7 +15,7 @@ type JobCardProps = {
 
 const JobCard: React.FC<JobCardProps> = ({ job, onEdit, onDelete }) => {
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 mb-4 max-w-[450px]">
+    <div className="bg-white shadow-md rounded-lg p-6 mb-4 w-[400px] max-w-[450px]">
       <h3 className="text-xl font-semibold text-slate-500 mb-2">{job.title}</h3>
       <p className="text-black mb-4">{job.description}</p>
 

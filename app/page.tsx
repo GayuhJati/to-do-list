@@ -3,34 +3,43 @@ import JobCard from "./component/Card";
 import { useState, useEffect } from "react";
 import EditModal from "./component/EditModal";
 import DeleteModal from "./component/DeleteModal";
+import AddModal from "./component/AddModal"; 
 import { PrismaClient, Job } from "@prisma/client";
+import { toast } from "react-toastify";
 
 const prisma = new PrismaClient();
 
 export default function Home() {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [selectedJob, setSelectedJob] = useState<any>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newJob, setNewJob] = useState({
+    title: '',
+    description: '',
+  });
 
-  // Fungsi untuk mengambil data dari database
   const fetchJobs = async () => {
     try {
       const response = await fetch("/api/jobs");
       const data = await response.json();
       setJobs(data.data);
     } catch (error) {
-      console.error('Error fetching:', error);
+      console.error("Error fetching:", error);
     }
   };
 
-  // Memuat data saat komponen dimuat pertama kali
   useEffect(() => {
     fetchJobs();
   }, []);
 
   const handleEdit = (job: Job) => {
     setSelectedJob(job);
+    setNewJob({
+      title:job.title,
+      description:job.description,
+    });
     setIsEditModalOpen(true);
   };
 
@@ -39,32 +48,91 @@ export default function Home() {
     setIsDeleteModalOpen(true);
   };
 
-  const saveJob = async (updatedJob: Job) => {
-    await fetch(`/api/jobs/${updatedJob.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedJob),
-    });
-    setIsEditModalOpen(false);
-    fetchJobs(); // Memperbarui daftar pekerjaan setelah penyimpanan
+  const saveJob = async (updatedJob: { title: string; description: string }) => {
+    const formData = new FormData();
+    formData.append('title', updatedJob.title);
+    formData.append('description', updatedJob.description);
+
+
+   try {
+      const url = `api/jobs/${selectedJob.id}`;
+      const method ='PUT';
+
+      const response = await fetch(url, {
+        method,
+        body: formData,
+      });
+      if (response.ok) {
+        setIsEditModalOpen(false);
+        toast.success("Task saved successfully !!!");
+        fetchJobs();
+      } else {
+        toast.error("Failed to save Task");
+      }
+    } catch (error) {
+      console.error('Error saving Task:', error);
+      toast.error("Error saving Task");
+    }
   };
 
   const deleteJob = async () => {
     if (selectedJob) {
-      await fetch(`/api/jobs/${selectedJob.id}`, {
-        method: "DELETE",
-      });
-      setIsDeleteModalOpen(false);
-      fetchJobs(); // Memperbarui daftar pekerjaan setelah penghapusan
+      try {
+        await fetch(`/api/jobs/${selectedJob.id}`, {
+          method: "DELETE",
+        });
+        setIsDeleteModalOpen(false);
+        toast.success("Task telah dihapus ")
+        fetchJobs(); 
+      } catch (error) {
+        toast.error("Task gagal di hapus")
+        console.error(error);
+      }
+      
     }
   };
 
+  const addJob = async (newJob: { title: string; description: string }) => {
+    const formData = new FormData();
+    formData.append('title', newJob.title);
+    formData.append('description', newJob.description);
+  
+    try {
+      const url = `/api/jobs`;
+      const method = 'POST';
+  
+      const response = await fetch(url, {
+        method,
+        body: formData, 
+      });
+  
+      if (response.ok) {
+        setIsAddModalOpen(false); 
+        toast.success("Task posted successfully !!!");
+        fetchJobs(); 
+      } else {
+        toast.error("Failed to add Task");
+      }
+    } catch (error) {
+      console.error('Error adding Task:', error);
+      toast.error("Error adding Task");
+    }
+  };
+  
+  
+
   return (
-    <div className="container flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">To-Do List</h1>
-      <div>
+    <div className=" px-12 flex flex-col gap-4 py-12 justify-center items-center">
+      <h1 className="text-6xl font-bold">To-Do List</h1>
+      <div className="bg-slate-50 bg-opacity-30 p-8 flex flex-col gap-10 rounded-xl w-full">
+        <div className="flex justify-end">
+          <button 
+          onClick={() => setIsAddModalOpen(true)} 
+          className="text-white text-2xl hover:bg-green-800 bg-green-700 font-semibold px-4 py-1 rounded-lg">
+            Add +
+          </button>
+        </div>
+        <div className="flex flex-wrap justify-start gap-x-11 px-[75px] gap-4 flex-row">
         {jobs.map((job) => (
           <JobCard
             key={job.id}
@@ -73,6 +141,7 @@ export default function Home() {
             onDelete={() => handleDelete(job)}
           />
         ))}
+        </div>
 
         {/* Edit Modal */}
         {selectedJob && (
@@ -92,6 +161,13 @@ export default function Home() {
             onDelete={deleteJob}
           />
         )}
+
+        {/* Add Modal */}
+        <AddModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)} 
+          onSubmit={addJob} 
+        />
       </div>
     </div>
   );
