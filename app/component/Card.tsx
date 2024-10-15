@@ -1,4 +1,3 @@
-// components/JobCard.tsx
 import React from 'react';
 
 type Job = {
@@ -19,7 +18,6 @@ const JobCard: React.FC<JobCardProps> = ({ job, onEdit, onDelete }) => {
       <h3 className="text-xl font-semibold text-slate-500 mb-2">{job.title}</h3>
       <p className="text-black mb-4">{job.description}</p>
 
-      {/* Buttons in the bottom-right corner */}
       <div className=" flex flex-row gap-2 justify-end">
         <button
           onClick={() => onEdit(job.id)}

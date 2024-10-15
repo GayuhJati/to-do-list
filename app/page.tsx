@@ -136,7 +136,6 @@ export default function Home() {
         ))}
         </div>
 
-        {/* Edit Modal */}
         {selectedJob && (
           <EditModal
             job={selectedJob}
@@ -146,7 +145,6 @@ export default function Home() {
           />
         )}
 
-        {/* Delete Modal */}
         {selectedJob && (
           <DeleteModal
             isOpen={isDeleteModalOpen}
@@ -155,7 +153,6 @@ export default function Home() {
           />
         )}
 
-        {/* Add Modal */}
         <AddModal
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)} 
