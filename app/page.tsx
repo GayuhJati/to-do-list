@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 
 export default function Home() {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -40,6 +40,8 @@ export default function Home() {
   };
 
   const saveJob = async (updatedJob: { title: string; description: string }) => {
+    if (!selectedJob) return; 
+    
     const formData = new FormData();
     formData.append('title', updatedJob.title);
     formData.append('description', updatedJob.description);
